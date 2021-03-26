@@ -77,18 +77,58 @@ class Student
   end
 
   def self.first_X_students_in_grade_10(integer)
-    students_in_10th_grade_array = []
-    self.all.map do |data|
-      students_in_10th_grade_array << data if data.grade != "10"
+
+    sql = <<-SQL
+      SELECT * 
+      FROM students 
+      WHERE students.grade = ? 
+      LIMIT ?
+    SQL
+    DB[:conn].execute(sql, "10", integer).map do |row|
+      self.new_from_db(row)
     end
 
-    final_array = []
-    i = 0
-    while i < integer
-      final_array.push(students_in_10th_grade_array[i])
-      i ++
-      binding.pry
+    # students_in_10th_grade_array = []
+
+    # self.all.map do |data|
+    #   students_in_10th_grade_array << data if data.grade != "10"
+    # end
+    # sliced_array = array_slice(students_in_10th_grade_array, 0, integer)
+    # sliced_array
+    # final_array = []
+    # i = 0
+
+    # while i < integer
+    #   if students_in_10th_grade_array[i] != ""
+    #     final_array.push(students_in_10th_grade_array[i])
+    #   end
+    #   i ++
+    # end
+
+    # final_array
+  end
+
+  def self.first_student_in_grade_10
+    sql = <<-SQL
+    SELECT * 
+    FROM students 
+    WHERE students.grade = ? 
+    LIMIT ?
+  SQL
+  DB[:conn].execute(sql, "10", 1).map do |row|
+    self.new_from_db(row)
+  end.first
+  end
+
+  def self.all_students_in_grade_X(grade)
+
+    sql = <<-SQL
+      SELECT * 
+      FROM students 
+      WHERE students.grade = ? 
+    SQL
+    DB[:conn].execute(sql, grade).map do |row|
+      self.new_from_db(row)
     end
-    final_array
   end
 end
